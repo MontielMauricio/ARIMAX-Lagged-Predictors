@@ -1,9 +1,9 @@
 ################################################
 # Con este código se pueden pronósticar series de tiempo multivariadas
 #
-## Funciones de transferencia utilizando el Indice Global de la Activida Económica
+## Funciones de transferencia para pronosticar el IPC utilizando el precio del petróleo
 #
-# Hecho por Mauricio Montiel el 10/04/2020
+# Hecho por Mauricio Montiel el 13/04/2020
 ###############################################
 
 # Preliminares
