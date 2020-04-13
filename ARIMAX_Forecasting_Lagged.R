@@ -70,13 +70,14 @@ c(fit1[["aicc"]],fit2[["aicc"]],fit3[["aicc"]],fit4[["aicc"]])
 # Selección automatica del modelo ARIMA
 
 modelo_x <- auto.arima(data_x[4:4848,1], xreg = oil_lag[4:4848,1:3], seasonal=T, stepwise=T, approximation=T)
+
 summary(modelo_x)
 checkresiduals(modelo_x) # Los residuales estan correlacionados
 
 # Pronóstico
-autoplot(forecast(modelo_x, h=6,
-         xreg = cbind(AdLag9=c(oil_lag[4848,1],rep(mean(data_x[4840:4848,2]),5)),
-                      AdLag10=c(oil_lag[4848,2],rep(mean(data_x[4840:4848,2]),5)),
-                      AdLag11=c(oil_lag[4848,3],rep(mean(data_x[4840:4848,2]),5)))), include = 30)
+autoplot(forecast(modelo_x, h=9,
+         xreg = cbind(AdLag9=oil_lag[4839:4848,1],
+                      AdLag10=oil_lag[4839:4848,2],
+                      AdLag11=oil_lag[4839:4848,3])), include = 100)
        
        
