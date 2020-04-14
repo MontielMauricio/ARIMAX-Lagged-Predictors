@@ -48,36 +48,31 @@ ur.kpss(diff(data_x[,2])) %>% summary() # los datos diferenciados si son estacio
 # Lagged predictors.
 
 oil_lag <- cbind(
-  AdLag9 = stats::lag(data_x[,"oil"],-9),
-  AdLag10 = stats::lag(data_x[,"oil"],-10),
-  AdLag11 = stats::lag(data_x[,"oil"],-11),
-  AdLag12 = stats::lag(data_x[,"oil"],-12)) %>%
-  head(NROW(data_x))
+  Lag0 = data_x[,"oil"],
+  Lag1 = stats::lag(data_x[,"oil"],-1),
+  Lag2 = stats::lag(data_x[,"oil"],-2),
+  Lag3 = stats::lag(data_x[,"oil"],-3)) 
 
 # Restrict data so models use same fitting period
-fit1 <- auto.arima(data_x[10:4848,1], xreg=oil_lag[10:4848,1],
-                   stationary=TRUE)
-fit2 <- auto.arima(data_x[10:4848,1], xreg=oil_lag[10:4848,1:2],
-                   stationary=TRUE)
-fit3 <- auto.arima(data_x[10:4848,1], xreg=oil_lag[10:4848,1:3],
-                   stationary=TRUE)
-fit4 <- auto.arima(data_x[10:4848,1], xreg=oil_lag[10:4848,1:4],
-                   stationary=TRUE)
+fit1 <- auto.arima(data_x[4:4848,1], xreg=oil_lag[4:4848,1], stationary=TRUE)
+fit2 <- auto.arima(data_x[4:4848,1], xreg=oil_lag[4:4848,1:2], stationary=TRUE)
+fit3 <- auto.arima(data_x[4:4848,1], xreg=oil_lag[4:4848,1:3], stationary=TRUE)
+fit4 <- auto.arima(data_x[4:4848,1], xreg=oil_lag[4:4848,1:4], stationary=TRUE)
 
-#chose the best 1:3
+# chose the best 1:3
 c(fit1[["aicc"]],fit2[["aicc"]],fit3[["aicc"]],fit4[["aicc"]])
 
 # Selección automatica del modelo ARIMA
 
-modelo_x <- auto.arima(data_x[4:4848,1], xreg = oil_lag[4:4848,1:3], seasonal=T, stepwise=T, approximation=T)
+modelo_x <- auto.arima(data_x[4:4848,1], xreg = oil_lag[4:4848,1:4], seasonal=T, stepwise=T, approximation=T)
 
 summary(modelo_x)
 checkresiduals(modelo_x) # Los residuales estan correlacionados
 
 # Pronóstico
-autoplot(forecast(modelo_x, h=9,
-         xreg = cbind(AdLag9=oil_lag[4839:4848,1],
-                      AdLag10=oil_lag[4839:4848,2],
-                      AdLag11=oil_lag[4839:4848,3])), include = 100)
-       
+autoplot(forecast(modelo_x, h=10,
+         xreg = cbind(Lag0=oil_lag[4838:4848,1],
+                      Lag1=oil_lag[4838:4848,2],
+                      Lag2=oil_lag[4838:4848,3],
+                      Lag3=oil_lag[4838:4848,4])), include = 39)
        
