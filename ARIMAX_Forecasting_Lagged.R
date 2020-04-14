@@ -3,7 +3,7 @@
 #
 ## Funciones de transferencia para pronosticar el IPC utilizando el precio del petróleo
 #
-# Hecho por Mauricio Montiel el 13/04/2020
+# Hecho por Mauricio Montiel el 14/04/2020
 ###############################################
 
 # Preliminares
@@ -40,13 +40,7 @@ ur.kpss(diff(data_x[,2])) %>% summary() # los datos diferenciados si son estacio
 # MA representa la media movil ponderada de los errores pasados del pronóstico.
 # X representa una variable o un conjunto de variables explicativas
 
-# Combinando los dos modelos
-# p = parte autorregresiva
-# d = grado de difenrenciacion
-# q = parte media movil
-
 # Lagged predictors.
-
 oil_lag <- cbind(
   Lag0 = data_x[,"oil"],
   Lag1 = stats::lag(data_x[,"oil"],-1),
@@ -59,13 +53,11 @@ fit2 <- auto.arima(data_x[4:4848,1], xreg=oil_lag[4:4848,1:2], stationary=TRUE)
 fit3 <- auto.arima(data_x[4:4848,1], xreg=oil_lag[4:4848,1:3], stationary=TRUE)
 fit4 <- auto.arima(data_x[4:4848,1], xreg=oil_lag[4:4848,1:4], stationary=TRUE)
 
-# chose the best 1:3
+# chose the best
 c(fit1[["aicc"]],fit2[["aicc"]],fit3[["aicc"]],fit4[["aicc"]])
 
-# Selección automatica del modelo ARIMA
-
+# Selección automatica del modelo ARIMAX
 modelo_x <- auto.arima(data_x[4:4848,1], xreg = oil_lag[4:4848,1:4], seasonal=T, stepwise=T, approximation=T)
-
 summary(modelo_x)
 checkresiduals(modelo_x) # Los residuales estan correlacionados
 
@@ -74,5 +66,5 @@ autoplot(forecast(modelo_x, h=10,
          xreg = cbind(Lag0=oil_lag[4838:4848,1],
                       Lag1=oil_lag[4838:4848,2],
                       Lag2=oil_lag[4838:4848,3],
-                      Lag3=oil_lag[4838:4848,4])), include = 39)
+                      Lag3=oil_lag[4838:4848,4])), include = 100)
        
